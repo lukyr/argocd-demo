@@ -23,7 +23,7 @@ pipeline {
       steps {
         container('docker') {
           // Publish new image
-          sh "docker login --username $DOCKERHUB_CREDS_USR --password $DOCKERHUB_CREDS_PSW && docker push datahubid/argocd-demo:${env.GIT_COMMIT}"
+          sh "docker login -u $DOCKERHUB_CREDS_USR -p $DOCKERHUB_CREDS_PSW docker.io && docker push datahubid/argocd-demo:${env.GIT_COMMIT}"
         }
       }
     }
