@@ -12,7 +12,8 @@ spec:
     image: docker:18.09-dind
     securityContext:
       privileged: true
-    command: ["--insecure-registry=192.168.0.105:5000"]
+    command: ["/bin/sh"]
+    args: ["-c", "--insecure-registry=192.168.0.105:5000"]
   - name: docker
     env:
     - name: DOCKER_HOST
