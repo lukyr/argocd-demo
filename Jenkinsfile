@@ -1,6 +1,6 @@
 pipeline {
   agent {
-    kube-minikube {
+    kubeminikube {
       label 'minikube-jenkins-slave'
       defaultContainer 'jnlp'
       yaml """
