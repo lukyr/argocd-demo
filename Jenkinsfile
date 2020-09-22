@@ -7,22 +7,11 @@ pipeline {
   }
   stages {
 
-    stage('Build Image') {
+    stage('Build') {
       steps {
         container('docker') {
           // Build new image
           sh "until docker ps; do sleep 3; done && docker build -t 192.168.0.105:5000/argocd-demo:${env.GIT_COMMIT} ."
-        }
-      }
-    }
-
-    stage('Push Image') {
-      environment {
-        DOCKERHUB_CREDS = credentials('dockerhub')
-      }
-      steps {
-        container('docker') {
-          // Publish new image
           sh "docker push 192.168.0.105:5000/argocd-demo:${env.GIT_COMMIT}"
         }
       }
