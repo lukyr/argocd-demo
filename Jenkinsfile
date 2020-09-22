@@ -11,7 +11,7 @@ pipeline {
       steps {
         container('docker') {
           // Build new image
-          sh "until docker ps; do sleep 3; done && docker build -t datahubid/argocd-demo:${env.GIT_COMMIT} ."
+          sh "until docker ps; do sleep 3; done && docker build -t 192.168.0.105:5000/argocd-demo:${env.GIT_COMMIT} ."
         }
       }
     }
@@ -23,7 +23,7 @@ pipeline {
       steps {
         container('docker') {
           // Publish new image
-          sh "docker login -u $DOCKERHUB_CREDS_USR -p $DOCKERHUB_CREDS_PSW docker.io && docker push datahubid/argocd-demo:${env.GIT_COMMIT}"
+          sh "docker push 192.168.0.105:5000/argocd-demo:${env.GIT_COMMIT}"
         }
       }
     }
@@ -38,7 +38,7 @@ pipeline {
           sh "git config --global user.email 'luky.ramdhanie@gmail.com'"
 
           dir("argocd-demo-deploy") {
-            sh "cd ./e2e && kustomize edit set image datahubid/argocd-demo:${env.GIT_COMMIT}"
+            sh "cd ./e2e && kustomize edit set image 192.168.0.105:5000/argocd-demo:${env.GIT_COMMIT}"
             sh "git commit -am 'Publish new version' && git push || echo 'no changes'"
           }
         }
@@ -50,7 +50,7 @@ pipeline {
         input message:'Approve deployment?'
         container('tools') {
           dir("argocd-demo-deploy") {
-            sh "cd ./prod && kustomize edit set image datahubid/argocd-demo:${env.GIT_COMMIT}"
+            sh "cd ./prod && kustomize edit set image 192.168.0.105:5000/argocd-demo:${env.GIT_COMMIT}"
             sh "git commit -am 'Publish new version' && git push || echo 'no changes'"
           }
         }
