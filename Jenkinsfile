@@ -32,13 +32,13 @@ pipeline {
       }
       steps {
         container('tools') {
-          sh "git clone https://$GIT_CREDS_USR:$GIT_CREDS_PSW@github.com/lukyr/argocd-demo-deploy.git"
+          sh "git clone --single-branch --branch local-registry https://$GIT_CREDS_USR:$GIT_CREDS_PSW@github.com/lukyr/argocd-demo-deploy.git"
           sh "git config --global user.email 'luky.ramdhanie@gmail.com'"
           sh "git checkout local-registry"
 
           dir("argocd-demo-deploy") {
             sh "cd ./e2e && kustomize edit set image 192.168.0.105:5000/argocd-demo:${env.GIT_COMMIT}"
-            sh "git commit -am 'Publish new version' && git push || echo 'no changes'"
+            sh "git commit -am 'Publish new version' && git push origin local-registry || echo 'no changes'"
           }
         }
       }
@@ -50,7 +50,7 @@ pipeline {
         container('tools') {
           dir("argocd-demo-deploy") {
             sh "cd ./prod && kustomize edit set image 192.168.0.105:5000/argocd-demo:${env.GIT_COMMIT}"
-            sh "git commit -am 'Publish new version' && git push || echo 'no changes'"
+            sh "git commit -am 'Publish new version' && git push git push origin local-registry || echo 'no changes'"
           }
         }
       }
