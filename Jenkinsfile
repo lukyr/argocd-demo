@@ -7,11 +7,20 @@ pipeline {
   }
   stages {
 
-    stage('Build') {
+    stage('Build Image') {
       steps {
         container('docker') {
           // Build new image
           sh "until docker ps; do sleep 3; done && docker build -t 192.168.0.105:5000/argocd-demo:${env.GIT_COMMIT} ."
+          sh "docker push 192.168.0.105:5000/argocd-demo:${env.GIT_COMMIT}"
+        }
+      }
+    }
+
+    stage('Push Image') {
+      steps {
+        container('docker') {
+          // Push image
           sh "docker push 192.168.0.105:5000/argocd-demo:${env.GIT_COMMIT}"
         }
       }
@@ -29,7 +38,7 @@ pipeline {
 
           dir("argocd-demo-deploy") {
             sh "cd ./e2e && kustomize edit set image 192.168.0.105:5000/argocd-demo:${env.GIT_COMMIT}"
-            sh "git commit -am 'Publish new version' && git push origin local-registry || echo 'no changes'"
+            sh "git commit -am 'Publish new version' && git push || echo 'no changes'"
           }
         }
       }
@@ -41,7 +50,7 @@ pipeline {
         container('tools') {
           dir("argocd-demo-deploy") {
             sh "cd ./prod && kustomize edit set image 192.168.0.105:5000/argocd-demo:${env.GIT_COMMIT}"
-            sh "git commit -am 'Publish new version' && git push origin local-registry || echo 'no changes'"
+            sh "git commit -am 'Publish new version' && git push || echo 'no changes'"
           }
         }
       }
