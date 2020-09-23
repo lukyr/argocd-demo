@@ -43,17 +43,5 @@ pipeline {
         }
       }
     }
-
-    stage('Deploy to Prod') {
-      steps {
-        input message:'Approve deployment?'
-        container('tools') {
-          dir("argocd-demo-deploy") {
-            sh "cd ./prod && kustomize edit set image 192.168.0.105:5000/argocd-demo:${env.GIT_COMMIT}"
-            sh "git commit -am 'Publish new version' && git push git push origin local-registry || echo 'no changes'"
-          }
-        }
-      }
-    }
   }
 }
