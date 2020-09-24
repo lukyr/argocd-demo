@@ -22,6 +22,7 @@ pipeline {
         container('docker') {
           // Push image
           sh "docker push 192.168.0.105:5000/argocd-demo:${env.GIT_COMMIT}"
+          sh "docker rmi 192.168.0.105:5000/argocd-demo:${env.GIT_COMMIT}"
         }
       }
     }
